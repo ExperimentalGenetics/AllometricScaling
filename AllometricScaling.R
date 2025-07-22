@@ -452,8 +452,8 @@ dat$hw[dat$geno=="Group 2"]=rnorm(10,80,5)
 m1=lm(hw~bw+geno,data=dat)
 summary(m1)
 
-tab_model(m1,pred.labels = c("Intercept", "Parameter 1", "Group 2"),
-          dv.labels = c("Case1: Linear Model with BW as covariate"),
+tab_model(m1,pred.labels = c("Intercept", "Parameter 1", "Group"),
+          dv.labels = c("Case 1A: Linear Model with Parameter 1 as covariate"),
           string.pred = "Coeffcient",
           string.ci = "Conf. Int (95%)",
           string.p = "P-Value"#,
@@ -487,8 +487,8 @@ ggboxplot(dat,y="hw2",x="geno",fill="geno")+xlab("")+ylab("Parameter 2")+theme(l
 
 m2=lm(hw2~bw+geno,data=dat)
 summary(m2)
-tab_model(m2,pred.labels = c("Intercept", "Parameter 1", "Group 2"),
-          dv.labels = c("Case1: Linear Model with BW as covariate"),
+tab_model(m2,pred.labels = c("Intercept", "Parameter 1", "Group"),
+          dv.labels = c("Case 1B: Linear Model with Parameter 1 as covariate"),
           string.pred = "Coeffcient",
           string.ci = "Conf. Int (95%)",
           string.p = "P-Value"
