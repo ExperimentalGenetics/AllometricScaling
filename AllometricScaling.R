@@ -205,12 +205,78 @@ ggscatter(df, x = "Body_weight", y = "Heart_weight",
   stat_regline_equation(label.x = 3,label.y=340)+
   theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")
 
-ggscatter(df, x = "Body_weight", y = "Heart_weight",alpha=.5,
-          color = "pipeline", fill="sex",palette =c("#009E73","#108e6c"),alpha=0.4,facet.by = c("sex"),
-          add = "reg.line", conf.int = FALSE)+
-  #stat_cor(aes(color = pipeline),label.x = 30)+
-  stat_regline_equation(aes(color = pipeline),label.x = 45)+
-  theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")
+# ggscatter(df, x = "Body_weight", y = "Heart_weight",alpha=.5,
+#           color = "pipeline", fill="sex",palette =c("#009E73","#108e6c"),alpha=0.4,facet.by = c("sex"),
+#           add = "reg.line", conf.int = FALSE)+
+#   #stat_cor(aes(color = pipeline), label.x = 15) +
+#   stat_regline_equation(aes(color = pipeline),label.x = 45)+
+#   theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")
+
+# Neue Gruppierungsvariable für Farbgebung
+df$group <- interaction(df$pipeline, df$sex)
+df$group<-factor(df$group,levels=c("LA.female","EA.female","LA.male" ,"EA.male"))
+
+# Farben
+group_colors <- c(
+  "LA.female" = "#af5587",
+  "EA.female" = "#CC79A7", 
+  "LA.male"   = "#0d7256",
+  "EA.male"   = "#009E73"
+)
+
+df <- df %>%
+  mutate(
+    label.y.cor = case_when(
+      group == "LA.female" ~ 300,
+      group == "EA.female" ~ 320,
+      group == "LA.male"   ~ 300,
+      group == "EA.male"   ~ 320
+    ),
+    label.y.eq = case_when(
+      group == "LA.female" ~ 300,
+      group == "EA.female" ~ 320,
+      group == "LA.male"   ~ 300,
+      group == "EA.male"   ~ 320
+    )
+  )
+
+# Basisplot
+p <- ggscatter(df, 
+               x = "Body_weight", 
+               y = "Heart_weight",
+               color = "group",                 
+               facet.by = "sex",               
+               palette = group_colors,
+               add = "reg.line", 
+               conf.int = FALSE,
+               alpha = 0.4) +
+  theme(legend.position = "none") +
+  xlab("Body weight [g]") +
+  ylab("Heart weight [mg]")
+
+# Statistiken pro Gruppe hinzufügen
+for (grp in unique(df$group)) {
+  sub_df <- df[df$group == grp, ]
+  
+  p <- p +
+    stat_cor(data = sub_df, 
+             aes(color = group, label = paste0("r = ", round(..r.., 3),", ")),
+             label.x = 38,
+             label.y = unique(sub_df$label.y.cor),
+             output.type = "text",
+             r.digits = 2,
+             p.digits = NA,
+             show.legend = FALSE)+
+    stat_regline_equation(data = sub_df,
+                          aes(color = group),
+                          label.x = 52,
+                          label.y = unique(sub_df$label.y.eq),
+                          output.type = "expression",
+                          show.legend = FALSE)
+}
+
+p
+############################
 
 #Tibia length
 ggscatter(df, x = "Tibia_length", y = "Heart_weight",
@@ -219,12 +285,50 @@ ggscatter(df, x = "Tibia_length", y = "Heart_weight",
   stat_regline_equation(label.y=340)+
   theme(legend.position = "none")+xlab("Tibia Length [mm]")+ylab("Heart weight [mg]")
 
-ggscatter(df, x = "Tibia_length", y = "Heart_weight",
-          color = "pipeline", palette =c("#CC79A7","#af5587","#009E73","#0d7256"),alpha=0.4,facet.by = c("sex"),
-          add = "reg.line", conf.int = FALSE)+xlim(14,22)+
-  #stat_cor(aes(color = pipeline),label.x = 17)+
-  stat_regline_equation(aes(color = pipeline),label.x = 15)+
-  theme(legend.position = "none")+xlab("Tibia Length [mm]")+ylab("Heart weight [mg]")
+# ggscatter(df, x = "Tibia_length", y = "Heart_weight",
+#           color = "pipeline", palette =c("#CC79A7","#af5587","#009E73","#0d7256"),alpha=0.4,facet.by = c("sex"),
+#           add = "reg.line", conf.int = FALSE)+xlim(14,22)+
+#   #stat_cor(aes(color = pipeline),label.x = 17)+
+#   stat_regline_equation(aes(color = pipeline),label.x = 15)+
+#   theme(legend.position = "none")+xlab("Tibia Length [mm]")+ylab("Heart weight [mg]")
+
+# Basisplot
+p <- ggscatter(df, 
+               x = "Tibia_length", 
+               y = "Heart_weight",
+               color = "group",                 
+               facet.by = "sex",               
+               palette = group_colors,
+               add = "reg.line", 
+               conf.int = FALSE,
+               alpha = 0.4) +
+  theme(legend.position = "none") +
+  xlab("Tibia Length [mm]") +
+  ylab("Heart weight [mg]")
+
+# Statistiken pro Gruppe hinzufügen
+for (grp in unique(df$group)) {
+  sub_df <- df[df$group == grp, ]
+  
+  p <- p +
+    stat_cor(data = sub_df, 
+             aes(color = group, label = paste0("r = ", round(..r.., 3),", ")),
+             label.x = 15,
+             label.y = unique(sub_df$label.y.cor),
+             output.type = "text",
+             r.digits = 2,
+             p.digits = NA,
+             show.legend = FALSE) +
+    
+    stat_regline_equation(data = sub_df,
+                          aes(color = group),
+                          label.x = 16.5,
+                          label.y = unique(sub_df$label.y.eq),
+                          output.type = "expression",
+                          show.legend = FALSE)
+}
+
+p
 
 ##########################
 # FIGURE 4
