@@ -218,10 +218,10 @@ df$group<-factor(df$group,levels=c("LA.female","EA.female","LA.male" ,"EA.male")
 
 # Farben
 group_colors <- c(
-  "LA.female" = "#af5587",
-  "EA.female" = "#CC79A7", 
-  "LA.male"   = "#0d7256",
-  "EA.male"   = "#009E73"
+  "LA.female" = "#8E44AD",  # Dunkles Lila
+  "EA.female" = "#9B7FBF",  # Dunkleres Lila (heller als LA.female, aber nicht zu hell)
+  "LA.male"   = "#1F7A1F",  # Dunkles Grün
+  "EA.male"   = "#4AA763"   # Dunkleres Hellgrün (heller als LA.male, aber dunkler als vorher)
 )
 
 df <- df %>%
@@ -376,13 +376,13 @@ allo_male   <- function(x) { 36.424 * x^0.3947 }
 
 #Plot for regression equation
 ggscatter(df, x = "Body_weight", y = "Heart_weight",alpha=.5,
-          color = "pipeline", fill="sex",palette =c("#CC79A7","#af5587","#009E73","#108e6c"),alpha=0.2,facet.by = c("sex"),
+          color = "group",palette =group_colors,alpha=0.2,facet.by = c("sex"),
           add = "reg.line", conf.int = FALSE)+xlim(10,80)+
   #stat_cor(aes(color = pipeline),label.x = 30)+
-  stat_regline_equation(aes(color = pipeline),label.x = 45)+
+  stat_regline_equation(aes(color = group),label.x = 45)+
   theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")+
-  geom_line(data = df %>% filter(sex == "female"),stat='function', fun=allo_female, color='blue', linetype='dashed', size=1)+ 
-  geom_line(data = df %>% filter(sex == "male"),stat='function', fun=allo_male, color='blue', linetype='dashed', size=1) +
+  geom_line(data = df %>% filter(sex == "female"),stat='function', fun=allo_female, color='black', linetype='dashed', size=1)+ 
+  geom_line(data = df %>% filter(sex == "male"),stat='function', fun=allo_male, color='black', linetype='dashed', size=1) +
   #geom_text(data = df %>% filter(sex == "female"),x = 3, y = 300, label ="y == 30 * x^{0.3}", parse = TRUE)
   geom_text(data = data.frame(sex = c("female", "male"),  # Gleichungen für die Facetten
                               x = c(50, 50), 
@@ -391,18 +391,18 @@ ggscatter(df, x = "Body_weight", y = "Heart_weight",alpha=.5,
                                         "y == 36.4 * x^{0.39}")),
             aes(x = x, y = y, label = label),
             parse = TRUE,
-            color = "blue",
+            color = "black",
             size = 4)
 
 
 ggscatter(df, x = "Tibia_length", y = "Heart_weight",alpha=.5,
-          color = "pipeline", fill="sex",palette =c("#CC79A7","#af5587","#009E73","#108e6c"),alpha=0.2,facet.by = c("sex"),
+          color = "group",palette =group_colors,alpha=0.2,facet.by = c("sex"),
           add = "reg.line", conf.int = FALSE)+xlim(14,22)+
   #stat_cor(aes(color = pipeline),label.x = 30)
-  stat_regline_equation(aes(color = pipeline),label.x = 14)+
+  stat_regline_equation(aes(color = group),label.x = 14)+
   theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")+
-  geom_line(data = df %>% filter(sex == "female"),stat='function', fun=allo_female, color='blue', linetype='dashed', size=1)+ 
-  geom_line(data = df %>% filter(sex == "male"),stat='function', fun=allo_male, color='blue', linetype='dashed', size=1) +
+  geom_line(data = df %>% filter(sex == "female"),stat='function', fun=allo_female, color='black', linetype='dashed', size=1)+ 
+  geom_line(data = df %>% filter(sex == "male"),stat='function', fun=allo_male, color='black', linetype='dashed', size=1) +
   #geom_text(data = df %>% filter(sex == "female"),x = 3, y = 300, label ="y == 30 * x^{0.3}", parse = TRUE)
   geom_text(data = data.frame(sex = c("female", "male"),  # Gleichungen für die Facetten
                               x = c(20,20), 
@@ -411,7 +411,7 @@ ggscatter(df, x = "Tibia_length", y = "Heart_weight",alpha=.5,
                                         "y == 32.1 * x^{0.52}")),
             aes(x = x, y = y, label = label),
             parse = TRUE,
-            color = "blue",
+            color = "black",
             size = 4)
 
 
@@ -456,8 +456,7 @@ tab_model(m1,pred.labels = c("Intercept", "Parameter 1", "Group"),
           dv.labels = c("Case 1A: Linear Model with Parameter 1 as covariate"),
           string.pred = "Coeffcient",
           string.ci = "Conf. Int (95%)",
-          string.p = "P-Value"#,
-          #file = "CASE1.doc"
+          string.p = "P-Value"
 )
 
 stat.test <- dat %>%
@@ -492,7 +491,6 @@ tab_model(m2,pred.labels = c("Intercept", "Parameter 1", "Group"),
           string.pred = "Coeffcient",
           string.ci = "Conf. Int (95%)",
           string.p = "P-Value"
-          #  file = "CASE1.doc"
 )
 
 #Scatterplots
