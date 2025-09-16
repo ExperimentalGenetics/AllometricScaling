@@ -8,7 +8,6 @@ library(effsize)
 library(sjPlot)
 library(sjmisc)
 library(sjlabelled)
-library(effsize)
 
 #load data
 df<-read.xlsx("Data_HW.xlsx")
@@ -212,16 +211,16 @@ ggscatter(df, x = "Body_weight", y = "Heart_weight",
 #   stat_regline_equation(aes(color = pipeline),label.x = 45)+
 #   theme(legend.position = "none")+xlab("Body weight [g]")+ylab("Heart weight [mg]")
 
-# Neue Gruppierungsvariable für Farbgebung
+# new grouping varaibale for colors
 df$group <- interaction(df$pipeline, df$sex)
 df$group<-factor(df$group,levels=c("LA.female","EA.female","LA.male" ,"EA.male"))
 
-# Farben
+# colors
 group_colors <- c(
-  "LA.female" = "#8E44AD",  # Dunkles Lila
-  "EA.female" = "#9B7FBF",  # Dunkleres Lila (heller als LA.female, aber nicht zu hell)
-  "LA.male"   = "#1F7A1F",  # Dunkles Grün
-  "EA.male"   = "#4AA763"   # Dunkleres Hellgrün (heller als LA.male, aber dunkler als vorher)
+  "LA.female" = "#8E44AD", 
+  "EA.female" = "#9B7FBF",  
+  "LA.male"   = "#1F7A1F", 
+  "EA.male"   = "#4AA763"   
 )
 
 df <- df %>%
@@ -240,7 +239,7 @@ df <- df %>%
     )
   )
 
-# Basisplot
+# basic plot
 p <- ggscatter(df, 
                x = "Body_weight", 
                y = "Heart_weight",
@@ -254,7 +253,7 @@ p <- ggscatter(df,
   xlab("Body weight [g]") +
   ylab("Heart weight [mg]")
 
-# Statistiken pro Gruppe hinzufügen
+# add stats per group
 for (grp in unique(df$group)) {
   sub_df <- df[df$group == grp, ]
   
@@ -292,7 +291,7 @@ ggscatter(df, x = "Tibia_length", y = "Heart_weight",
 #   stat_regline_equation(aes(color = pipeline),label.x = 15)+
 #   theme(legend.position = "none")+xlab("Tibia Length [mm]")+ylab("Heart weight [mg]")
 
-# Basisplot
+# basic plot
 p <- ggscatter(df, 
                x = "Tibia_length", 
                y = "Heart_weight",
@@ -306,7 +305,7 @@ p <- ggscatter(df,
   xlab("Tibia Length [mm]") +
   ylab("Heart weight [mg]")
 
-# Statistiken pro Gruppe hinzufügen
+# add statistics per group
 for (grp in unique(df$group)) {
   sub_df <- df[df$group == grp, ]
   
@@ -332,31 +331,31 @@ p
 
 ##########################
 # FIGURE 4
-#Allometric Sacling Model
+#Allometric Scaling Model
 
 test<-df[df$sex=="female",]
 #test<-df[df$sex=="male",]
 
-# Hw  und BW
+# HW and BW
 L <- test$Body_weight
 #L <- test$Tibia_length
 M <- test$Heart_weight
 
-# Logarithmieren der Daten
+# log of data
 logL <- log10(L)
 logM <- log10(M)
 
-# Lineare Regression
+# linear regression
 model <- lm(logM ~ logL)
 
-# Koeffizienten der linearen Regression
+# coefficients
 c <- coef(model)[2]  # Steigung
 logb <- coef(model)[1]  # y-Achsenabschnitt
 
-# Antilogarithmus von log(b) um b zu erhalten
+# anti log to get b
 b <- 10^logb
 
-# Ergebnisse ausgeben
+#  print results
 cat(sprintf("b = %f, c = %f\n", b, c))
 
 #BW
@@ -367,9 +366,12 @@ cat(sprintf("b = %f, c = %f\n", b, c))
 #both female: b = 11.102819, c = 0.830599
 #both male:b = 32.066647, c = 0.522664
 
-#Durch Logarithmieren geht die zwischen den Variablen x und y bestehende allometrische Beziehung y = b · x c ( mit b > 0) 
-#in log(y) = log(b · x c ) = log(b) + c · log(x) über. Diese Gleichung bringt zum Ausdruck, dass zwischen den
-#transformierten Variablen ye := log(y) und xe := log(x) die lineare Abhängigkeit ye = c · xe + log(b) besteht
+# By applying a logarithmic transformation, the allometric relationship between the variables x and y,
+# given by y = b · x^c (with b > 0), becomes:
+# log(y) = log(b · x^c) = log(b) + c · log(x).
+# This equation shows that, after transformation, there is a linear relationship between the transformed
+# variables ye := log(y) and xe := log(x), namely:
+# ye = c · xe + log(b).
 
 allo_female <- function(x) { 34.143 * x^0.3838 }
 allo_male   <- function(x) { 36.424 * x^0.3947 }
@@ -515,7 +517,7 @@ stat.test <- stat.test %>% add_xy_position(x = "geno")
 dat %>%cohens_d(ratio ~ geno) 
 ggboxplot(dat,y="ratio",x="geno",fill="geno")+xlab("")+ylab("Parameter 1 / Parameter 2")+theme(legend.position = "none")+scale_fill_manual(values=c("#79AF97FF","#6A6599FF"))+ stat_pvalue_manual(stat.test,label = "T-test, p = {p}")
 
-#calcualte ratio CASE 2
+#calculate ratio CASE 2
 dat$ratio2<-dat$hw2/dat$bw
 
 stat.test <- dat %>%
