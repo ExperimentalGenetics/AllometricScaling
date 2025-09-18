@@ -11,6 +11,7 @@ This repository contains R code and a dataset used for analyzing allometric scal
 
 ## Requirements
 
+Used R version 4.2.2.
 To run the analysis, you need R installed along with the following R packages:
 
 - 'openxlsx'
