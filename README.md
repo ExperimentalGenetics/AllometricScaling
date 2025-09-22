@@ -1,6 +1,6 @@
 # AllometricScaling
 
-This repository contains R code and a dataset used for analyzing allometric scaling relationships. The code was developed as part of a scientific project and produces plots and summaries used in a manuscript.
+This repository contains R code and a dataset used for analyzing allometric scaling relationships. The code was developed as part of a scientific project and produces plots and summaries used in a manuscript (https://www.biorxiv.org/content/10.1101/2025.09.01.673426v1).
 
 ## Repository Contents
 
